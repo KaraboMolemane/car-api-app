@@ -19,7 +19,7 @@ function Car(props){
                     <div>
                         <div className="bd-example-snippet bd-code-snippet">
                             <div className="bd-example">        
-                                <button type="button" className="btn btn-info">Modify</button>
+                                <button type="button" className="btn btn-info">ModifyXXXX</button>
                                 <button type="button" className="btn btn-danger" style={{marginLeft: '20px'}}>Delete</button>
                             </div>
                         </div>
