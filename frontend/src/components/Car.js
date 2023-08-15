@@ -33,8 +33,29 @@ function Car(props){
 
     function handleCarSave(car){
       console.log(cars);
-      cars.push(car);
-      console.log(cars)
+      // cars.push(car);
+      // console.log(cars)
+
+      // Post new car to endpoint
+      // https://youtu.be/pJiRj02PkJQ
+      // const blog = {
+      //   id: car.id,
+      //   make: car.make,
+      //   model: car.model,
+      //   seats: car.seats,
+      //   imgUrl: car.imgUrl
+      // }
+      const blog = car;
+
+      console.log('blog:', blog)
+
+      fetch('/', {
+        method: 'POST', 
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify(blog)
+      }).then(() => {
+        console.log('New car added')
+      })
     }
 
     return(
