@@ -6,7 +6,7 @@ const fs = require('fs');
 app.get('/api', function (req, res) {
     fs.readFile('./public/cars.json', (err, data) => {
         if (err) console.log('error reading file:', err);
-        res.send(`array: ${data}`);  
+        res.send(JSON.parse(data));  
     })
 })
 

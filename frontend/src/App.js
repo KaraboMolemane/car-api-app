@@ -32,7 +32,6 @@ function App() {
 
       //Do the API call
       fetch('/api')
-        .then(res => console.log(res))
         .then(res => res.json())
         .then(
           (result) => {
