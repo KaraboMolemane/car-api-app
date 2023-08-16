@@ -45,14 +45,14 @@ function Car(props){
       //   seats: car.seats,
       //   imgUrl: car.imgUrl
       // }
-      const blog = car;
+      //const blog = car;
 
-      console.log('blog:', blog)
+      console.log('car:', car)
 
       fetch('/', {
         method: 'POST', 
         headers: {"Content-Type": "application/json"},
-        body: JSON.stringify(blog)
+        body: JSON.stringify(car)
       }).then(() => {
         console.log('New car added')
       })
