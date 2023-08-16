@@ -1,12 +1,16 @@
 const express = require('express');
 const app = express();
 const fs = require('fs');
+const bodyParser = require('body-parser')
+
+app.use(bodyParser.urlencoded({ extended: true }))
+app.use(bodyParser.json())
 
 // When the user navigates to ‘http://localhost:8080/api’ an array of car items should be returned.
 app.get('/api', function (req, res) {
     fs.readFile('./public/cars.json', (err, data) => {
         if (err) console.log('error reading file:', err);
-        res.send(`array: ${data}`);  
+        res.send(JSON.parse(data));  
     })
 })
 
@@ -17,10 +21,10 @@ app.listen(8080, function () {
 // The user should be able to use Postman to make an HTTP Post request that adds an additional item to the list of cars.
 app.post('/', (req, resp)=>{
     const car = {
-        id: req.query.id,
-        make: req.query.make,
-        model: req.query.model,
-        seats: req.query.seats
+        id: req.body.id,
+        make: req.body.make,
+        model: req.body.model,
+        seats: req.body.seats
     }
     console.log('Car:', car);
     const cars = getCars()

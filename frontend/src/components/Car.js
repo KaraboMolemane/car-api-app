@@ -12,15 +12,22 @@ function Car(props){
                 <div className="col-md-5">
                   <div className="card-body">
                     <h5 className="card-title">Car details</h5>
-                    <p className="card-text">Id: <span>{car.id}</span></p>
-                    <p className="card-text">Make: <span>{car.make}</span></p>
-                    <p className="card-text">Model:<span>{car.model}</span></p>
-                    <p className="card-text">Seats: <span>{car.seats}</span></p>
+                    <p className="card-text">Id: <span id={'car_id_'+car.id}>{car.id}</span></p>
+                    <p className="card-text">Make: <span id={'car_name_'+car.id}>{car.make}</span></p>
+                    <p className="card-text">Model:<span id={'car_model'+car.id}>{car.model}</span></p>
+                    <p className="card-text">Seats: <span id={'car_seats_'+car.id}>{car.seats}</span></p>
                     <div>
                         <div className="bd-example-snippet bd-code-snippet">
                             <div className="bd-example">        
-                                <button type="button" className="btn btn-info">Modify</button>
-                                <button type="button" className="btn btn-danger" style={{marginLeft: '20px'}}>Delete</button>
+                                <button type="button" className="btn btn-info" data-bs-toggle="modal" data-bs-target="#staticBackdropLive" onClick={() => handleModifyCar({
+                    id: car.id,
+                    make: car.make,
+                    model: car.model,
+                    seats: car.seats,
+                    imgUrl: car.imgUrl,
+
+                  }, 'modify')}>Modify</button>
+                                <button type="button" className="btn btn-danger" style={{marginLeft: '20px'}} onClick={() => handleCarDelete(car.id)}>Delete</button>
                             </div>
                         </div>
                     </div>
@@ -33,8 +40,61 @@ function Car(props){
 
     function handleCarSave(car){
       console.log(cars);
-      cars.push(car);
-      console.log(cars)
+      // cars.push(car);
+      // console.log(cars)
+
+      // Post new car to endpoint
+      // https://youtu.be/pJiRj02PkJQ
+      // const blog = {
+      //   id: car.id,
+      //   make: car.make,
+      //   model: car.model,
+      //   seats: car.seats,
+      //   imgUrl: car.imgUrl
+      // }
+      //const blog = car;
+
+      console.log('car:', car)
+
+      fetch('/', {
+        method: 'POST', 
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify(car)
+      }).then(() => {
+        console.log('New car added')
+      })
+    }
+
+    function handleCarDelete(carId){
+      console.log('/car/'+ carId);
+      fetch('/car/'+ carId, {
+        method: 'DELETE'
+      }).then(() => {
+        console.log('car deleted')
+      })
+
+    }
+
+    function handleModifyCar(car, mode){
+      // console.log('car:', car)
+
+      // Set values on edit modal
+      document.getElementById("id").value = car.id;
+      document.getElementById("id").setAttribute('disabled', ''); // Do not allow user to edit the id in 'modify mode
+      document.getElementById("make").value = car.make;
+      document.getElementById("model").value = car.model;
+      document.getElementById("seats").value = car.seats;
+      document.getElementById("image_url").value = car.imgUrl;
+    }
+
+    function handleAddNewCar(){
+      // Caler modal values on edit modal
+      document.getElementById("id").value = '';
+      document.getElementById("id").removeAttribute('disabled'); 
+      document.getElementById("make").value = '';
+      document.getElementById("model").value = '';
+      document.getElementById("seats").value = '';
+      document.getElementById("image_url").value = '';
     }
 
     return(
@@ -48,7 +108,7 @@ function Car(props){
             </div>
           </div>
         </div>
-        <button type="button" className="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdropLive" style={{margin: '20px 0 0 50%'}}>
+        <button type="button" className="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdropLive" style={{margin: '20px 0 0 50%'}} onClick={() => handleAddNewCar()}>
             Add a new car
         </button>
 
@@ -56,7 +116,7 @@ function Car(props){
             <div className="modal-dialog">
               <div className="modal-content">
                 <div className="modal-header">
-                  <h1 className="modal-title fs-5" id="staticBackdropLiveLabel">Modal title</h1>
+                  <h1 className="modal-title fs-5" id="staticBackdropLiveLabel">Add/Edit a car</h1>
                   <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div className="modal-body">
@@ -65,7 +125,7 @@ function Car(props){
                         <div className="bd-example">
                           <form className="row g-3">
                             <div className="col-md-6">
-                              <label for="id" className="form-label">Id:</label>
+                              <label for="id" className="form-label" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-original-title="Id is only modifiable for new cars">Id:</label>
                               <input type="number" className="form-control" id="id" required/>
                             </div>
                             <div className="col-md-6">
