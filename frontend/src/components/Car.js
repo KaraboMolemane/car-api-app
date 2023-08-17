@@ -1,6 +1,8 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 
 function Car(props){
+
+    const editMode = useRef('');
     let cars = props.cars;
     const carItems = cars.map((car, index) =>
             <div className="col" key={index}>
@@ -26,7 +28,7 @@ function Car(props){
                     seats: car.seats,
                     imgUrl: car.imgUrl,
 
-                  }, 'modify')}>Modify</button>
+                  })}>Modify</button>
                                 <button type="button" className="btn btn-danger" style={{marginLeft: '20px'}} onClick={() => handleCarDelete(car.id)}>Delete</button>
                             </div>
                         </div>
@@ -38,23 +40,27 @@ function Car(props){
         </div>        
     )
 
-    function handleCarSave(car){
-      console.log(cars);
-      // cars.push(car);
-      // console.log(cars)
+    function handleCarSave(car){      
 
-      // Post new car to endpoint
-      // https://youtu.be/pJiRj02PkJQ
+      if(editMode.current === 'new'){
+        fetch('/', {
+          method: 'POST', 
+          headers: {"Content-Type": "application/json"},
+          body: JSON.stringify(car)
+        }).then(() => {
+          console.log('New car added')
+        })
+      }
+      else if(editMode.current === 'modify'){
+        fetch('/update', {
+          method: 'PUT', 
+          headers: {"Content-Type": "application/json"},
+          body: JSON.stringify(car)
+        }).then(() => {
+          console.log('Car modified')
+        })
+      }
 
-      console.log('car:', car)
-
-      fetch('/', {
-        method: 'POST', 
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify(car)
-      }).then(() => {
-        console.log('New car added')
-      })
     }
 
     function handleCarDelete(carId){
@@ -67,9 +73,10 @@ function Car(props){
 
     }
 
-    function handleModifyCar(car, mode){
-      // console.log('car:', car)
+    function handleModifyCar(car){
 
+      // set editMode
+      editMode.current = 'modify';
       // Set values on edit modal
       document.getElementById("id").value = car.id;
       document.getElementById("id").setAttribute('disabled', ''); // Do not allow user to edit the id in 'modify mode
@@ -77,10 +84,13 @@ function Car(props){
       document.getElementById("model").value = car.model;
       document.getElementById("seats").value = car.seats;
       document.getElementById("image_url").value = car.imgUrl;
+
     }
 
     function handleAddNewCar(){
-      // Caler modal values on edit modal
+      // set editMode
+      editMode.current = 'new';
+      // Clear modal values on edit modal
       document.getElementById("id").value = '';
       document.getElementById("id").removeAttribute('disabled'); 
       document.getElementById("make").value = '';
@@ -162,3 +172,7 @@ function Car(props){
 }
 
 export default Car;
+
+      // Useful links
+      // https://youtu.be/pJiRj02PkJQ
+      // https://jasonwatmore.com/post/2020/11/11/react-fetch-http-delete-request-examples
