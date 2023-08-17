@@ -24,7 +24,8 @@ app.post('/', (req, resp)=>{
         id: parseInt(req.body.id),
         make: req.body.make,
         model: req.body.model,
-        seats: parseInt(req.body.seats)
+        seats: parseInt(req.body.seats),
+        imgUrl: (req.body.imgUrl.length>1)? req.body.imgUrl : 'https://picsum.photos/250/200?random='+req.body.id  
     }
     console.log('Car:', car);
     const cars = getCars()
@@ -38,13 +39,6 @@ app.post('/', (req, resp)=>{
         addCar(car)
         resp.send('Success')
     }
-
-    // if (cars.map(e => e.id).indexOf(car.id) > -1){
-    //     resp.send('Car already exists')
-    // }else{
-    //     addCar(car)
-    //     resp.send('Success')
-    // }
 })
 
 // utility function - gets car data, and creates the file if it doesn't exist
@@ -86,9 +80,10 @@ function deleteCar(id){
 // The user should be able to make an HTTP Put request to update the model or number of seats of a car.
 app.put('/update', (req, resp) => {
     const car = {
-        id: req.query.id,
-        model: req.query.model,
-        seats: req.query.seats
+        id: parseInt(req.body.id),
+        model: req.body.model,
+        seats: parseInt(req.body.seats),
+        imgUrl: req.body.imgUrl
     }
     const cars = getCars()
     if (cars.map(e => e.id).indexOf(car.id) > -1){
@@ -102,8 +97,9 @@ app.put('/update', (req, resp) => {
 function updateCar(car){
     const cars = getCars();
     const i = cars.map(e => e.id).indexOf(car.id);
-    if(car.seats) cars[i].seats = car.seats;
-    if(car.model) cars[i].model = car.model;
+    if(cars[i].seats !== car.seats) cars[i].seats = car.seats;
+    if(cars[i].model !== car.model ) cars[i].model = car.model;
+    if(cars[i].imgUrl !== car.imgUrl) cars[i].imgUrl = car.model;
     fs.writeFileSync('./public/cars.json', JSON.stringify(cars))
 }
 
