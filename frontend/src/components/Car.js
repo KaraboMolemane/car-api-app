@@ -70,11 +70,9 @@ function Car(props){
       }).then(() => {
         console.log('car deleted')
       })
-
     }
 
     function handleModifyCar(car){
-
       // set editMode
       editMode.current = 'modify';
       // Set values on edit modal
@@ -84,7 +82,6 @@ function Car(props){
       document.getElementById("model").value = car.model;
       document.getElementById("seats").value = car.seats;
       document.getElementById("image_url").value = car.imgUrl;
-
     }
 
     function handleAddNewCar(){
@@ -127,23 +124,23 @@ function Car(props){
                         <div className="bd-example">
                           <form className="row g-3">
                             <div className="col-md-6">
-                              <label for="id" className="form-label" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-original-title="Id is only modifiable for new cars">Id:</label>
+                              <label htmlFor="id" className="form-label" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-original-title="Id is only modifiable for new cars">Id:</label>
                               <input type="number" className="form-control" id="id" required/>
                             </div>
                             <div className="col-md-6">
-                              <label for="make" className="form-label">Make:</label>
+                              <label htmlFor="make" className="form-label">Make:</label>
                               <input type="text" className="form-control" id="make" required/>
                             </div>
                             <div className="col-md-6">
-                              <label for="model" className="form-label">Model:</label>
+                              <label htmlFor="model" className="form-label">Model:</label>
                               <input type="text" className="form-control" id="model" required/>
                             </div>
                             <div className="col-md-6">
-                              <label for="seats" className="form-label">Seats:</label>
+                              <label htmlFor="seats" className="form-label">Seats:</label>
                               <input type="number" className="form-control" id="seats" required/>
                             </div>
                             <div className="col-md-12">
-                              <label for="image_url" className="form-label">Image URL:</label>
+                              <label htmlFor="image_url" className="form-label">Image URL:</label>
                               <input type="text" className="form-control" id="image_url" />
                             </div>
                           </form>
@@ -176,3 +173,4 @@ export default Car;
       // Useful links
       // https://youtu.be/pJiRj02PkJQ
       // https://jasonwatmore.com/post/2020/11/11/react-fetch-http-delete-request-examples
+      //https://stackoverflow.com/questions/42089548/how-to-add-delay-in-react-js
