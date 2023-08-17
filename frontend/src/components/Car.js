@@ -1,9 +1,11 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 
 function Car(props){
+
+    const editMode = useRef('');
     let cars = props.cars;
     const carItems = cars.map((car, index) =>
-            <div className="col" key={car.id}>
+            <div className="col" key={index}>
             <div className="card">
               <div className="row g-0">
                 <div className="col-md-7">
@@ -26,7 +28,7 @@ function Car(props){
                     seats: car.seats,
                     imgUrl: car.imgUrl,
 
-                  }, 'modify')}>Modify</button>
+                  })}>Modify</button>
                                 <button type="button" className="btn btn-danger" style={{marginLeft: '20px'}} onClick={() => handleCarDelete(car.id)}>Delete</button>
                             </div>
                         </div>
@@ -38,31 +40,27 @@ function Car(props){
         </div>        
     )
 
-    function handleCarSave(car){
-      console.log(cars);
-      // cars.push(car);
-      // console.log(cars)
+    function handleCarSave(car){      
 
-      // Post new car to endpoint
-      // https://youtu.be/pJiRj02PkJQ
-      // const blog = {
-      //   id: car.id,
-      //   make: car.make,
-      //   model: car.model,
-      //   seats: car.seats,
-      //   imgUrl: car.imgUrl
-      // }
-      //const blog = car;
+      if(editMode.current === 'new'){
+        fetch('/', {
+          method: 'POST', 
+          headers: {"Content-Type": "application/json"},
+          body: JSON.stringify(car)
+        }).then(() => {
+          console.log('New car added')
+        })
+      }
+      else if(editMode.current === 'modify'){
+        fetch('/update', {
+          method: 'PUT', 
+          headers: {"Content-Type": "application/json"},
+          body: JSON.stringify(car)
+        }).then(() => {
+          console.log('Car modified')
+        })
+      }
 
-      console.log('car:', car)
-
-      fetch('/', {
-        method: 'POST', 
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify(car)
-      }).then(() => {
-        console.log('New car added')
-      })
     }
 
     function handleCarDelete(carId){
@@ -72,12 +70,11 @@ function Car(props){
       }).then(() => {
         console.log('car deleted')
       })
-
     }
 
-    function handleModifyCar(car, mode){
-      // console.log('car:', car)
-
+    function handleModifyCar(car){
+      // set editMode
+      editMode.current = 'modify';
       // Set values on edit modal
       document.getElementById("id").value = car.id;
       document.getElementById("id").setAttribute('disabled', ''); // Do not allow user to edit the id in 'modify mode
@@ -88,7 +85,9 @@ function Car(props){
     }
 
     function handleAddNewCar(){
-      // Caler modal values on edit modal
+      // set editMode
+      editMode.current = 'new';
+      // Clear modal values on edit modal
       document.getElementById("id").value = '';
       document.getElementById("id").removeAttribute('disabled'); 
       document.getElementById("make").value = '';
@@ -112,7 +111,7 @@ function Car(props){
             Add a new car
         </button>
 
-          <div className="modal fade" id="staticBackdropLive" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLiveLabel" aria-hidden="true">
+          <div className="modal fade" id="staticBackdropLive" data-bs-backdrop="static" data-bs-keyboard="false" tabIndex="-1" aria-labelledby="staticBackdropLiveLabel" aria-hidden="true">
             <div className="modal-dialog">
               <div className="modal-content">
                 <div className="modal-header">
@@ -125,23 +124,23 @@ function Car(props){
                         <div className="bd-example">
                           <form className="row g-3">
                             <div className="col-md-6">
-                              <label for="id" className="form-label" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-original-title="Id is only modifiable for new cars">Id:</label>
+                              <label htmlFor="id" className="form-label" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-original-title="Id is only modifiable for new cars">Id:</label>
                               <input type="number" className="form-control" id="id" required/>
                             </div>
                             <div className="col-md-6">
-                              <label for="make" className="form-label">Make:</label>
+                              <label htmlFor="make" className="form-label">Make:</label>
                               <input type="text" className="form-control" id="make" required/>
                             </div>
                             <div className="col-md-6">
-                              <label for="model" className="form-label">Model:</label>
+                              <label htmlFor="model" className="form-label">Model:</label>
                               <input type="text" className="form-control" id="model" required/>
                             </div>
                             <div className="col-md-6">
-                              <label for="seats" className="form-label">Seats:</label>
+                              <label htmlFor="seats" className="form-label">Seats:</label>
                               <input type="number" className="form-control" id="seats" required/>
                             </div>
                             <div className="col-md-12">
-                              <label for="image_url" className="form-label">Image URL:</label>
+                              <label htmlFor="image_url" className="form-label">Image URL:</label>
                               <input type="text" className="form-control" id="image_url" />
                             </div>
                           </form>
@@ -170,3 +169,8 @@ function Car(props){
 }
 
 export default Car;
+
+      // Useful links
+      // https://youtu.be/pJiRj02PkJQ
+      // https://jasonwatmore.com/post/2020/11/11/react-fetch-http-delete-request-examples
+      //https://stackoverflow.com/questions/42089548/how-to-add-delay-in-react-js

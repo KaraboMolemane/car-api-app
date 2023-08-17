@@ -32,16 +32,30 @@ function App() {
   },)
 
   if (error) {
-    return <div>Error: {error.message}</div>;
-    } else if (!isLoaded) {
+    if(error.message.includes('Unexpected token')){
+      //Sometimes the fetch throws an error if it reads the file while it is being saved
+      // The fetch is too quick for the JSON file save
+      //We shall force a reload of the page after 1/2 second when this happens 
+
+      setTimeout(() => {
+        window.location.reload(false);
+      }, 500);
+    }
+    return (
+      <>
+        <div>Error: {error.message}</div>
+      </>
+      );
+  } else if (!isLoaded) {
     return <div>Loading...</div>;
-    } else {
+  } else {
     return (
       <>
         <Header />
         <Car cars={cars}/>
       </>
-    );}
+      );
+    }
   }
 
 export default App;

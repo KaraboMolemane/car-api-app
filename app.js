@@ -21,14 +21,19 @@ app.listen(8080, function () {
 // The user should be able to use Postman to make an HTTP Post request that adds an additional item to the list of cars.
 app.post('/', (req, resp)=>{
     const car = {
-        id: req.body.id,
+        id: parseInt(req.body.id),
         make: req.body.make,
         model: req.body.model,
-        seats: req.body.seats
+        seats: parseInt(req.body.seats),
+        imgUrl: (req.body.imgUrl.length>1)? req.body.imgUrl : 'https://picsum.photos/250/200?random='+req.body.id  
     }
     console.log('Car:', car);
     const cars = getCars()
-    if (cars.map(e => e.id).indexOf(car.id) > -1){
+    const index = cars.findIndex(object => {
+        return object.id === car.id;
+      });
+    
+    if(index > -1 ){
         resp.send('Car already exists')
     }else{
         addCar(car)
@@ -55,7 +60,7 @@ function addCar(car){
 
 // The user should be able to use Postman to make an HTTP Delete request that deletes an item with a specific id from the list.
 app.delete('/car/:id', (req, resp) => {
-    const id = req.params.id
+    const id = parseInt(req.params.id)
     const cars = getCars();
     if (cars.map(e => e.id).indexOf(id) > -1){
         deleteCar(id)
@@ -75,9 +80,10 @@ function deleteCar(id){
 // The user should be able to make an HTTP Put request to update the model or number of seats of a car.
 app.put('/update', (req, resp) => {
     const car = {
-        id: req.query.id,
-        model: req.query.model,
-        seats: req.query.seats
+        id: parseInt(req.body.id),
+        model: req.body.model,
+        seats: parseInt(req.body.seats),
+        imgUrl: req.body.imgUrl
     }
     const cars = getCars()
     if (cars.map(e => e.id).indexOf(car.id) > -1){
@@ -91,8 +97,9 @@ app.put('/update', (req, resp) => {
 function updateCar(car){
     const cars = getCars();
     const i = cars.map(e => e.id).indexOf(car.id);
-    if(car.seats) cars[i].seats = car.seats;
-    if(car.model) cars[i].model = car.model;
+    if(cars[i].seats !== car.seats) cars[i].seats = car.seats;
+    if(cars[i].model !== car.model ) cars[i].model = car.model;
+    if(cars[i].imgUrl !== car.imgUrl) cars[i].imgUrl = car.model;
     fs.writeFileSync('./public/cars.json', JSON.stringify(cars))
 }
 
