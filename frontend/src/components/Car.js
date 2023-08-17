@@ -3,7 +3,7 @@ import { useState } from "react";
 function Car(props){
     let cars = props.cars;
     const carItems = cars.map((car, index) =>
-            <div className="col" key={car.id}>
+            <div className="col" key={index}>
             <div className="card">
               <div className="row g-0">
                 <div className="col-md-7">
@@ -45,14 +45,6 @@ function Car(props){
 
       // Post new car to endpoint
       // https://youtu.be/pJiRj02PkJQ
-      // const blog = {
-      //   id: car.id,
-      //   make: car.make,
-      //   model: car.model,
-      //   seats: car.seats,
-      //   imgUrl: car.imgUrl
-      // }
-      //const blog = car;
 
       console.log('car:', car)
 
@@ -112,7 +104,7 @@ function Car(props){
             Add a new car
         </button>
 
-          <div className="modal fade" id="staticBackdropLive" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLiveLabel" aria-hidden="true">
+          <div className="modal fade" id="staticBackdropLive" data-bs-backdrop="static" data-bs-keyboard="false" tabIndex="-1" aria-labelledby="staticBackdropLiveLabel" aria-hidden="true">
             <div className="modal-dialog">
               <div className="modal-content">
                 <div className="modal-header">

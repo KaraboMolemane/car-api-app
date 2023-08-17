@@ -21,19 +21,30 @@ app.listen(8080, function () {
 // The user should be able to use Postman to make an HTTP Post request that adds an additional item to the list of cars.
 app.post('/', (req, resp)=>{
     const car = {
-        id: req.body.id,
+        id: parseInt(req.body.id),
         make: req.body.make,
         model: req.body.model,
-        seats: req.body.seats
+        seats: parseInt(req.body.seats)
     }
     console.log('Car:', car);
     const cars = getCars()
-    if (cars.map(e => e.id).indexOf(car.id) > -1){
+    const index = cars.findIndex(object => {
+        return object.id === car.id;
+      });
+    
+    if(index > -1 ){
         resp.send('Car already exists')
     }else{
         addCar(car)
         resp.send('Success')
     }
+
+    // if (cars.map(e => e.id).indexOf(car.id) > -1){
+    //     resp.send('Car already exists')
+    // }else{
+    //     addCar(car)
+    //     resp.send('Success')
+    // }
 })
 
 // utility function - gets car data, and creates the file if it doesn't exist
@@ -55,7 +66,7 @@ function addCar(car){
 
 // The user should be able to use Postman to make an HTTP Delete request that deletes an item with a specific id from the list.
 app.delete('/car/:id', (req, resp) => {
-    const id = req.params.id
+    const id = parseInt(req.params.id)
     const cars = getCars();
     if (cars.map(e => e.id).indexOf(id) > -1){
         deleteCar(id)
