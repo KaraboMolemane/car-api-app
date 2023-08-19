@@ -1,8 +1,13 @@
-import { useRef, useState } from "react";
+import { useRef } from "react";
+import { useNavigate, useHistory, redirect } from 'react-router-dom';
+
 
 function Car(props){
 
     const editMode = useRef('');
+
+    // useNavigate redirect back to home page after adding, modifying or deleting a car - https://youtu.be/TmVqwhBUiSM
+    // const navigate = useNavigate(); // throws a runtime error 
     let cars = props.cars;
     const carItems = cars.map((car, index) =>
             <div className="col" key={index}>
@@ -41,14 +46,16 @@ function Car(props){
     )
 
     function handleCarSave(car){      
-
+      
       if(editMode.current === 'new'){
         fetch('/', {
           method: 'POST', 
           headers: {"Content-Type": "application/json"},
           body: JSON.stringify(car)
         }).then(() => {
-          console.log('New car added')
+          console.log('Car added/modified');
+          // navigate('/'); 
+          window.location.href = '/';
         })
       }
       else if(editMode.current === 'modify'){
@@ -57,7 +64,9 @@ function Car(props){
           headers: {"Content-Type": "application/json"},
           body: JSON.stringify(car)
         }).then(() => {
-          console.log('Car modified')
+          console.log('Car modified');
+          // navigate('/'); 
+          window.location.href = '/';
         })
       }
 
@@ -68,7 +77,10 @@ function Car(props){
       fetch('/car/'+ carId, {
         method: 'DELETE'
       }).then(() => {
-        console.log('car deleted')
+        console.log('car deleted');
+        // navigate('/'); 
+        window.location.href = '/';
+
       })
     }
 
