@@ -25,10 +25,10 @@ function Car(props){
                 <div className="col-md-5">
                   <div className="card-body">
                     <h5 className="card-title">Car details</h5>
-                    <p className="card-text">Id: <span id={'car_id_'+car.id}>{car.id}</span></p>
-                    <p className="card-text">Make: <span id={'car_name_'+car.id}>{car.make}</span></p>
-                    <p className="card-text">Model:<span id={'car_model'+car.id}>{car.model}</span></p>
-                    <p className="card-text">Seats: <span id={'car_seats_'+car.id}>{car.seats}</span></p>
+                    <p className="card-text">Id: <span>{car.id}</span></p>
+                    <p className="card-text">Make: <span>{car.make}</span></p>
+                    <p className="card-text">Model:<span>{car.model}</span></p>
+                    <p className="card-text">Seats: <span>{car.seats}</span></p>
                     <div>
                         <div className="bd-example-snippet bd-code-snippet">
                             <div className="bd-example">        
