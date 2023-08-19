@@ -1,10 +1,16 @@
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { useNavigate, useHistory, redirect } from 'react-router-dom';
 
 
 function Car(props){
 
     const editMode = useRef('');
+    // values for controlled inputs, two-way binding - https://youtu.be/IkMND33x0qQ
+    const [id, setId] = useState(0);
+    const [make, setMake] = useState('');
+    const [model, setModel] = useState('');
+    const [seats, setSeats] = useState(0);
+    const [imgUrl, setImgUrl] = useState(''); 
 
     // useNavigate redirect back to home page after adding, modifying or deleting a car - https://youtu.be/TmVqwhBUiSM
     // const navigate = useNavigate(); // throws a runtime error 
@@ -45,8 +51,18 @@ function Car(props){
         </div>        
     )
 
-    function handleCarSave(car){      
+    function handleCarSave(){      
       
+      const car = {
+        id: id,
+        make: make,
+        model:model,
+        seats: seats,
+        imgUrl: imgUrl,
+      }
+      console.log('car:', car);
+      console.log('editmode:', editMode.current)
+
       if(editMode.current === 'new'){
         fetch('/', {
           method: 'POST', 
@@ -87,25 +103,19 @@ function Car(props){
     function handleModifyCar(car){
       // set editMode
       editMode.current = 'modify';
+      // Do not allow user to edit the id in 'modify mode
+      document.getElementById("id").setAttribute('disabled', ''); 
       // Set values on edit modal
-      document.getElementById("id").value = car.id;
-      document.getElementById("id").setAttribute('disabled', ''); // Do not allow user to edit the id in 'modify mode
-      document.getElementById("make").value = car.make;
-      document.getElementById("model").value = car.model;
-      document.getElementById("seats").value = car.seats;
-      document.getElementById("image_url").value = car.imgUrl;
+      setId(car.id);
+      setMake(car.make);
+      setModel(car.model);
+      setSeats(car.seats);
+      setImgUrl(car.imgUrl);
     }
 
     function handleAddNewCar(){
       // set editMode
       editMode.current = 'new';
-      // Clear modal values on edit modal
-      document.getElementById("id").value = '';
-      document.getElementById("id").removeAttribute('disabled'); 
-      document.getElementById("make").value = '';
-      document.getElementById("model").value = '';
-      document.getElementById("seats").value = '';
-      document.getElementById("image_url").value = '';
     }
 
     return(
@@ -137,23 +147,23 @@ function Car(props){
                           <form className="row g-3">
                             <div className="col-md-6">
                               <label htmlFor="id" className="form-label" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-original-title="Id is only modifiable for new cars">Id:</label>
-                              <input type="number" className="form-control" id="id" required/>
+                              <input type="number" className="form-control" id="id" value={id} onChange={(e) => setId(e.target.value)} required/>
                             </div>
                             <div className="col-md-6">
                               <label htmlFor="make" className="form-label">Make:</label>
-                              <input type="text" className="form-control" id="make" required/>
+                              <input type="text" className="form-control" id="make" value={make} onChange={(e) => setMake(e.target.value)} required/>
                             </div>
                             <div className="col-md-6">
                               <label htmlFor="model" className="form-label">Model:</label>
-                              <input type="text" className="form-control" id="model" required/>
+                              <input type="text" className="form-control" id="model" value={model} onChange={(e) => setModel(e.target.value)} required/>
                             </div>
                             <div className="col-md-6">
                               <label htmlFor="seats" className="form-label">Seats:</label>
-                              <input type="number" className="form-control" id="seats" required/>
+                              <input type="number" className="form-control" id="seats" value={seats} onChange={(e) => setSeats(e.target.value)} required/>
                             </div>
                             <div className="col-md-12">
                               <label htmlFor="image_url" className="form-label">Image URL:</label>
-                              <input type="text" className="form-control" id="image_url" />
+                              <input type="text" className="form-control" id="image_url" value={imgUrl} onChange={(e) => setImgUrl(e.target.value)} />
                             </div>
                           </form>
                         </div>
@@ -161,14 +171,7 @@ function Car(props){
                   </div>
                 </div>
                 <div className="modal-footer">
-                  <button type="button" className="btn btn-primary" data-bs-dismiss="modal" onClick={() => handleCarSave({
-                    id: document.getElementById("id").value,
-                    make: document.getElementById("make").value,
-                    model: document.getElementById("model").value,
-                    seats: document.getElementById("seats").value,
-                    imgUrl: document.getElementById("image_url").value,
-
-                  })}>Save</button>
+                  <button type="button" className="btn btn-primary" data-bs-dismiss="modal" onClick={() => handleCarSave()}>Save</button>
                   <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                 </div>
               </div>
