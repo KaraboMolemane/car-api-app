@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react';
 
 function App() {
 
+  //Declare states
   const [error, setError] = useState(null);
   const [isLoaded, setIsLoaded] = useState(false);
   const [cars, setCars] = useState([]);
@@ -27,8 +28,6 @@ function App() {
             // console.log(error)
           }
         )
-  
-
   },[])
 
   if (error) {
