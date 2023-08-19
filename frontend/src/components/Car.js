@@ -117,8 +117,9 @@ function Car(props){
     }
 
     function handleAddNewCar(){
-      // set editMode
+      // set editMode and enable id input
       editMode.current = 'new';
+      document.getElementById("id").removeAttribute('disabled');
     }
 
     return(
