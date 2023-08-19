@@ -1,11 +1,22 @@
 import { useRef, useState } from "react";
+import { useNavigate, useHistory, redirect } from 'react-router-dom';
+
 
 function Car(props){
 
     const editMode = useRef('');
+    // values for controlled inputs, two-way binding
+    const [id, setId] = useState(0);
+    const [make, setMake] = useState('');
+    const [model, setModel] = useState('');
+    const [seats, setSeats] = useState(0);
+    const [imgUrl, setImgUrl] = useState(''); 
+
+    // useNavigate redirect back to home page after adding, modifying or deleting a car 
+    // const navigate = useNavigate(); // throws a runtime error 
     let cars = props.cars;
     const carItems = cars.map((car, index) =>
-            <div className="col" key={index}>
+          <div className="col" key={index}>
             <div className="card">
               <div className="row g-0">
                 <div className="col-md-7">
@@ -14,24 +25,27 @@ function Car(props){
                 <div className="col-md-5">
                   <div className="card-body">
                     <h5 className="card-title">Car details</h5>
-                    <p className="card-text">Id: <span id={'car_id_'+car.id}>{car.id}</span></p>
-                    <p className="card-text">Make: <span id={'car_name_'+car.id}>{car.make}</span></p>
-                    <p className="card-text">Model:<span id={'car_model'+car.id}>{car.model}</span></p>
-                    <p className="card-text">Seats: <span id={'car_seats_'+car.id}>{car.seats}</span></p>
+                    <p className="card-text">Id: <span>{car.id}</span></p>
+                    <p className="card-text">Make: <span>{car.make}</span></p>
+                    <p className="card-text">Model:<span>{car.model}</span></p>
+                    <p className="card-text">Seats: <span>{car.seats}</span></p>
                     <div>
-                        <div className="bd-example-snippet bd-code-snippet">
-                            <div className="bd-example">        
-                                <button type="button" className="btn btn-info" data-bs-toggle="modal" data-bs-target="#staticBackdropLive" onClick={() => handleModifyCar({
-                    id: car.id,
-                    make: car.make,
-                    model: car.model,
-                    seats: car.seats,
-                    imgUrl: car.imgUrl,
-
-                  })}>Modify</button>
-                                <button type="button" className="btn btn-danger" style={{marginLeft: '20px'}} onClick={() => handleCarDelete(car.id)}>Delete</button>
-                            </div>
-                        </div>
+                      <div className="bd-example-snippet bd-code-snippet">
+                          <div className="bd-example">        
+                            <button type="button" className="btn btn-info" data-bs-toggle="modal" data-bs-target="#staticBackdropLive" onClick={() => handleModifyCar({
+                              id: car.id,
+                              make: car.make,
+                              model: car.model,
+                              seats: car.seats,
+                              imgUrl: car.imgUrl,
+                            })}>
+                              Modify
+                            </button>
+                            <button type="button" className="btn btn-danger" style={{marginLeft: '20px'}} onClick={() => handleCarDelete(car.id)}>
+                              Delete
+                            </button>
+                          </div>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -40,7 +54,15 @@ function Car(props){
         </div>        
     )
 
-    function handleCarSave(car){      
+    function handleCarSave(){      
+      //add or save a modified car
+      const car = {
+        id: id,
+        make: make,
+        model:model,
+        seats: seats,
+        imgUrl: imgUrl,
+      }
 
       if(editMode.current === 'new'){
         fetch('/', {
@@ -48,7 +70,9 @@ function Car(props){
           headers: {"Content-Type": "application/json"},
           body: JSON.stringify(car)
         }).then(() => {
-          console.log('New car added')
+          console.log('Car added/modified');
+          // navigate('/'); 
+          window.location.href = '/';
         })
       }
       else if(editMode.current === 'modify'){
@@ -57,43 +81,44 @@ function Car(props){
           headers: {"Content-Type": "application/json"},
           body: JSON.stringify(car)
         }).then(() => {
-          console.log('Car modified')
+          console.log('Car modified');
+          // navigate('/'); 
+          window.location.href = '/';
         })
       }
 
     }
 
     function handleCarDelete(carId){
+      //Delete car
       console.log('/car/'+ carId);
       fetch('/car/'+ carId, {
         method: 'DELETE'
       }).then(() => {
-        console.log('car deleted')
+        console.log('car deleted');
+        // navigate('/'); 
+        window.location.href = '/';
+
       })
     }
 
     function handleModifyCar(car){
+      //Modify car
       // set editMode
       editMode.current = 'modify';
+      // Do not allow user to edit the id in 'modify mode
+      document.getElementById("id").setAttribute('disabled', ''); 
       // Set values on edit modal
-      document.getElementById("id").value = car.id;
-      document.getElementById("id").setAttribute('disabled', ''); // Do not allow user to edit the id in 'modify mode
-      document.getElementById("make").value = car.make;
-      document.getElementById("model").value = car.model;
-      document.getElementById("seats").value = car.seats;
-      document.getElementById("image_url").value = car.imgUrl;
+      setId(car.id);
+      setMake(car.make);
+      setModel(car.model);
+      setSeats(car.seats);
+      setImgUrl(car.imgUrl);
     }
 
     function handleAddNewCar(){
       // set editMode
       editMode.current = 'new';
-      // Clear modal values on edit modal
-      document.getElementById("id").value = '';
-      document.getElementById("id").removeAttribute('disabled'); 
-      document.getElementById("make").value = '';
-      document.getElementById("model").value = '';
-      document.getElementById("seats").value = '';
-      document.getElementById("image_url").value = '';
     }
 
     return(
@@ -111,57 +136,50 @@ function Car(props){
             Add a new car
         </button>
 
-          <div className="modal fade" id="staticBackdropLive" data-bs-backdrop="static" data-bs-keyboard="false" tabIndex="-1" aria-labelledby="staticBackdropLiveLabel" aria-hidden="true">
-            <div className="modal-dialog">
-              <div className="modal-content">
-                <div className="modal-header">
-                  <h1 className="modal-title fs-5" id="staticBackdropLiveLabel">Add/Edit a car</h1>
-                  <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div className="modal-body">
-                    <div>
-                      <div className="bd-example-snippet bd-code-snippet">
-                        <div className="bd-example">
-                          <form className="row g-3">
-                            <div className="col-md-6">
-                              <label htmlFor="id" className="form-label" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-original-title="Id is only modifiable for new cars">Id:</label>
-                              <input type="number" className="form-control" id="id" required/>
-                            </div>
-                            <div className="col-md-6">
-                              <label htmlFor="make" className="form-label">Make:</label>
-                              <input type="text" className="form-control" id="make" required/>
-                            </div>
-                            <div className="col-md-6">
-                              <label htmlFor="model" className="form-label">Model:</label>
-                              <input type="text" className="form-control" id="model" required/>
-                            </div>
-                            <div className="col-md-6">
-                              <label htmlFor="seats" className="form-label">Seats:</label>
-                              <input type="number" className="form-control" id="seats" required/>
-                            </div>
-                            <div className="col-md-12">
-                              <label htmlFor="image_url" className="form-label">Image URL:</label>
-                              <input type="text" className="form-control" id="image_url" />
-                            </div>
-                          </form>
-                        </div>
+        <div className="modal fade" id="staticBackdropLive" data-bs-backdrop="static" data-bs-keyboard="false" tabIndex="-1" aria-labelledby="staticBackdropLiveLabel" aria-hidden="true">
+          <div className="modal-dialog">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h1 className="modal-title fs-5" id="staticBackdropLiveLabel">Add/Edit a car</h1>
+                <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div className="modal-body">
+                  <div>
+                    <div className="bd-example-snippet bd-code-snippet">
+                      <div className="bd-example">
+                        <form className="row g-3">
+                          <div className="col-md-6">
+                            <label htmlFor="id" className="form-label" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-original-title="Id is only modifiable for new cars">Id:</label>
+                            <input type="number" className="form-control" id="id" value={id} onChange={(e) => setId(e.target.value)} required/>
+                          </div>
+                          <div className="col-md-6">
+                            <label htmlFor="make" className="form-label">Make:</label>
+                            <input type="text" className="form-control" id="make" value={make} onChange={(e) => setMake(e.target.value)} required/>
+                          </div>
+                          <div className="col-md-6">
+                            <label htmlFor="model" className="form-label">Model:</label>
+                            <input type="text" className="form-control" id="model" value={model} onChange={(e) => setModel(e.target.value)} required/>
+                          </div>
+                          <div className="col-md-6">
+                            <label htmlFor="seats" className="form-label">Seats:</label>
+                            <input type="number" className="form-control" id="seats" value={seats} onChange={(e) => setSeats(e.target.value)} required/>
+                          </div>
+                          <div className="col-md-12">
+                            <label htmlFor="image_url" className="form-label">Image URL:</label>
+                            <input type="text" className="form-control" id="image_url" value={imgUrl} onChange={(e) => setImgUrl(e.target.value)} />
+                          </div>
+                        </form>
                       </div>
-                  </div>
+                    </div>
                 </div>
-                <div className="modal-footer">
-                  <button type="button" className="btn btn-primary" data-bs-dismiss="modal" onClick={() => handleCarSave({
-                    id: document.getElementById("id").value,
-                    make: document.getElementById("make").value,
-                    model: document.getElementById("model").value,
-                    seats: document.getElementById("seats").value,
-                    imgUrl: document.getElementById("image_url").value,
-
-                  })}>Save</button>
-                  <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                </div>
+              </div>
+              <div className="modal-footer">
+                <button type="button" className="btn btn-primary" data-bs-dismiss="modal" onClick={() => handleCarSave()}>Save</button>
+                <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
               </div>
             </div>
           </div>
+        </div>
       </>
 
     )
@@ -173,4 +191,6 @@ export default Car;
       // Useful links
       // https://youtu.be/pJiRj02PkJQ
       // https://jasonwatmore.com/post/2020/11/11/react-fetch-http-delete-request-examples
-      //https://stackoverflow.com/questions/42089548/how-to-add-delay-in-react-js
+      // https://stackoverflow.com/questions/42089548/how-to-add-delay-in-react-js
+      // https://youtu.be/TmVqwhBUiSM
+      // https://youtu.be/IkMND33x0qQ
