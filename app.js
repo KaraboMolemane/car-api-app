@@ -81,6 +81,7 @@ function deleteCar(id){
 app.put('/update', (req, resp) => {
     const car = {
         id: parseInt(req.body.id),
+        make: req.body.make,
         model: req.body.model,
         seats: parseInt(req.body.seats),
         imgUrl: req.body.imgUrl
@@ -97,9 +98,10 @@ app.put('/update', (req, resp) => {
 function updateCar(car){
     const cars = getCars();
     const i = cars.map(e => e.id).indexOf(car.id);
-    if(cars[i].seats !== car.seats) cars[i].seats = car.seats;
+    if(cars[i].make !== car.make) cars[i].make = car.make;
     if(cars[i].model !== car.model ) cars[i].model = car.model;
-    if(cars[i].imgUrl !== car.imgUrl) cars[i].imgUrl = car.model;
+    if(cars[i].seats !== car.seats) cars[i].seats = car.seats;
+    if(cars[i].imgUrl !== car.imgUrl) cars[i].imgUrl = car.imgUrl;
     fs.writeFileSync('./public/cars.json', JSON.stringify(cars))
 }
 
