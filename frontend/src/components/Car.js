@@ -70,7 +70,7 @@ function Car(props){
           headers: {"Content-Type": "application/json"},
           body: JSON.stringify(car)
         }).then(() => {
-          console.log('Car added/modified');
+          console.log('Car added');
           // navigate('/'); 
           window.location.href = '/';
         })
@@ -122,6 +122,14 @@ function Car(props){
       document.getElementById("id").removeAttribute('disabled');
     }
 
+    function clearModalOnClose(){
+      setId(0);
+      setMake('');
+      setModel('');
+      setSeats(0);
+      setImgUrl('');
+    }
+
     return(
       <>
         <div>
@@ -142,7 +150,7 @@ function Car(props){
             <div className="modal-content">
               <div className="modal-header">
                 <h1 className="modal-title fs-5" id="staticBackdropLiveLabel">Add/Edit a car</h1>
-                <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close" onClick={() => clearModalOnClose()}></button>
               </div>
               <div className="modal-body">
                   <div>
@@ -176,7 +184,7 @@ function Car(props){
               </div>
               <div className="modal-footer">
                 <button type="button" className="btn btn-primary" data-bs-dismiss="modal" onClick={() => handleCarSave()}>Save</button>
-                <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" className="btn btn-secondary" data-bs-dismiss="modal" onClick={() => clearModalOnClose()}>Close</button>
               </div>
             </div>
           </div>
