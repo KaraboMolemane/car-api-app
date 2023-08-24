@@ -70,7 +70,6 @@ function Car(props){
           headers: {"Content-Type": "application/json"},
           body: JSON.stringify(car)
         }).then(() => {
-          console.log('Car added');
           // navigate('/'); 
           window.location.href = '/';
         })
@@ -81,7 +80,6 @@ function Car(props){
           headers: {"Content-Type": "application/json"},
           body: JSON.stringify(car)
         }).then(() => {
-          console.log('Car modified');
           // navigate('/'); 
           window.location.href = '/';
         })
@@ -91,11 +89,9 @@ function Car(props){
 
     function handleCarDelete(carId){
       //Delete car
-      console.log('/car/'+ carId);
       fetch('/car/'+ carId, {
         method: 'DELETE'
       }).then(() => {
-        console.log('car deleted');
         // navigate('/'); 
         window.location.href = '/';
 

@@ -18,14 +18,12 @@ function App() {
         .then(res => res.json())
         .then(
           (result) => {
-          //   console.log(result)
           setIsLoaded(true);
           setCars(result);
           },
           (error) => {
             setIsLoaded(true);
             setError(error);
-            // console.log(error)
           }
         )
   },[])

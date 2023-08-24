@@ -1,12 +1,6 @@
 import { useState } from 'react';
 
 function Header(){
-
-    const [showHelp, setShowHelp] = useState(false);
-
-    const handleClose = () => setShowHelp(false);
-    const handleShow = () => setShowHelp(true);
-
     return(
         <header className="bd-header bg-secondary py-3 d-flex align-items-stretch border-bottom border-dark">
             <div className="container-fluid d-flex align-items-center">
