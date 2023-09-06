@@ -1,108 +1,119 @@
 const express = require('express');
-const app = express();
 const fs = require('fs');
-const bodyParser = require('body-parser')
+const bodyParser = require('body-parser');
+const helmet = require("helmet");
 
-app.use(bodyParser.urlencoded({ extended: true }))
+
+const app = express();
+app.use(helmet()); // Use Helmet!
+const CARS_JSON = './public/cars.json';
+
+
+app.use(bodyParser.urlencoded({
+    extended: true
+}))
 app.use(bodyParser.json())
 
 // When the user navigates to ‘http://localhost:8080/api’ an array of car items should be returned.
 app.get('/api', function (req, res) {
-    fs.readFile('./public/cars.json', (err, data) => {
+    fs.readFile(CARS_JSON, (err, data) => {
         if (err) console.log('error reading file:', err);
-        res.send(JSON.parse(data));  
+        res.send(JSON.parse(data));
     })
 })
+
+app.get("/helmet", (req, res) => {
+    res.send("Hello world! Our app is now wearing a Helmet for security reasons.");
+});
 
 app.listen(8080, function () {
     console.log('Example app listening on port 8080!')
 })
 
 // The user should be able to use Postman to make an HTTP Post request that adds an additional item to the list of cars.
-app.post('/', (req, resp)=>{
-    const car = {
+app.post('/', (req, resp) => {
+    const CAR = {
         id: parseInt(req.body.id),
         make: req.body.make,
         model: req.body.model,
         seats: parseInt(req.body.seats),
-        imgUrl: (req.body.imgUrl.length>1)? req.body.imgUrl : 'https://picsum.photos/250/200?random='+req.body.id  
+        imgUrl: (req.body.imgUrl.length > 1) ? req.body.imgUrl : 'https://picsum.photos/250/200?random=' + req.body.id
     }
-    console.log('Car:', car);
-    const cars = getCars()
-    const index = cars.findIndex(object => {
-        return object.id === car.id;
-      });
-    
-    if(index > -1 ){
+    const CARS = getCars()
+    const index = CARS.findIndex(object => {
+        return object.id === CAR.id;
+    });
+
+    if (index > -1) {
         resp.send('Car already exists')
-    }else{
-        addCar(car)
+    } else {
+        addCar(CAR)
         resp.send('Success')
     }
 })
 
 // utility function - gets car data, and creates the file if it doesn't exist
-function getCars(){
+function getCars() {
     try {
-        const content = fs.readFileSync('./public/cars.json')
-        return JSON.parse(content);
-    }catch(e){ // file non-existent
-        fs.writeFileSync('./public/cars.json', '[]');
+        const CONTENT = fs.readFileSync(CARS_JSON)
+        return JSON.parse(CONTENT);
+    } catch (e) { // file non-existent
+        fs.writeFileSync(CARS_JSON, '[]');
         return [];
     }
 }
 
-function addCar(car){
-    const cars = getCars();
-    cars.push(car)
-    fs.writeFileSync('./public/cars.json', JSON.stringify(cars))
+function addCar(car) {
+    const CARS = getCars();
+    CARS.push(car)
+    fs.writeFileSync(CARS_JSON, JSON.stringify(CARS))
 }
 
 // The user should be able to use Postman to make an HTTP Delete request that deletes an item with a specific id from the list.
 app.delete('/car/:id', (req, resp) => {
-    const id = parseInt(req.params.id)
-    const cars = getCars();
-    if (cars.map(e => e.id).indexOf(id) > -1){
-        deleteCar(id)
+    const ID = parseInt(req.params.id)
+    const CARS = getCars();
+    if (CARS.map(e => e.id).indexOf(ID) > -1) {
+        deleteCar(ID)
         resp.send('Success')
-    }else{
+    } else {
         resp.send('Car does not exist')
     }
 })
 
-function deleteCar(id){
-    const cars = getCars();
-    const i = cars.map(e => e.id).indexOf(id);
-    cars.splice(i, 1);
-    fs.writeFileSync('./public/cars.json', JSON.stringify(cars))
+function deleteCar(id) {
+    const CARS = getCars();
+    const i = CARS.map(e => e.id).indexOf(id);
+    CARS.splice(i, 1);
+    fs.writeFileSync(CARS_JSON, JSON.stringify(CARS))
 }
 
 // The user should be able to make an HTTP Put request to update the model or number of seats of a car.
 app.put('/update', (req, resp) => {
-    const car = {
+    const CAR = {
         id: parseInt(req.body.id),
         make: req.body.make,
         model: req.body.model,
         seats: parseInt(req.body.seats),
         imgUrl: req.body.imgUrl
     }
-    const cars = getCars()
-    if (cars.map(e => e.id).indexOf(car.id) > -1){
-        updateCar(car)
+    const CARS = getCars()
+    if (CARS.map(e => e.id).indexOf(CAR.id) > -1) {
+        updateCar(CAR)
         resp.send('Success')
-    }else{
+    } else {
         resp.send('Car does not exist')
     }
 })
 
-function updateCar(car){
-    const cars = getCars();
-    const i = cars.map(e => e.id).indexOf(car.id);
-    if(cars[i].make !== car.make) cars[i].make = car.make;
-    if(cars[i].model !== car.model ) cars[i].model = car.model;
-    if(cars[i].seats !== car.seats) cars[i].seats = car.seats;
-    if(cars[i].imgUrl !== car.imgUrl) cars[i].imgUrl = car.imgUrl;
-    fs.writeFileSync('./public/cars.json', JSON.stringify(cars))
+function updateCar(car) {
+    const CARS = getCars();
+    const i = CARS.map(e => e.id).indexOf(car.id);
+    if (CARS[i].make !== car.make) CARS[i].make = car.make;
+    if (CARS[i].model !== car.model) CARS[i].model = car.model;
+    if (CARS[i].seats !== car.seats) CARS[i].seats = car.seats;
+    if (CARS[i].imgUrl !== car.imgUrl) CARS[i].imgUrl = car.imgUrl;
+    fs.writeFileSync(CARS_JSON, JSON.stringify(CARS))
 }
 
 
